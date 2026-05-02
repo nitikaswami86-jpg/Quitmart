@@ -1,0 +1,73 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Login – QuickMart{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">⚡</div>
+        <h2 class="auth-title">Welcome Back!</h2>
+        <p class="auth-subtitle text-muted">QuickMart mein login karein</p>
+
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+            {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="post" id="loginForm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-600">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-600">Password</label>
+                <div class="position-relative">
+                    {{ form.password }}
+                    <button type="button" class="password-toggle" onclick="togglePassword('id_password', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold" id="loginBtn">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </form>
+
+        <div class="auth-divider"><span>OR</span></div>
+
+        <div class="text-center">
+            <p class="mb-0">Account nahi hai? <a href="{% url 'register' %}" class="auth-link">Register karein →</a></p>
+        </div>
+
+        <div class="demo-creds mt-4">
+            <p class="small fw-600 mb-2">🧪 Demo Credentials:</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-secondary btn-sm" onclick="fillDemo('testuser', 'test123')">
+                    User: testuser / test123
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="fillDemo('admin', 'admin123')">
+                    Admin: admin / admin123
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function fillDemo(user, pass) {
+    document.getElementById('id_username').value = user;
+    document.getElementById('id_password').value = pass;
+}
+document.getElementById('loginForm').addEventListener('submit', function() {
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

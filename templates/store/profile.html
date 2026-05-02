@@ -1,0 +1,100 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Profile – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="profile-sidebar">
+                <div class="profile-avatar">{{ user.first_name|first|upper|default:user.username|first|upper }}</div>
+                <h5 class="fw-700 mt-3">{{ user.get_full_name|default:user.username }}</h5>
+                <p class="text-muted small">{{ user.email }}</p>
+                <hr>
+                <nav class="profile-nav">
+                    <a href="{% url 'profile' %}" class="profile-nav-link active">
+                        <i class="bi bi-person"></i> My Profile
+                    </a>
+                    <a href="{% url 'orders' %}" class="profile-nav-link">
+                        <i class="bi bi-bag"></i> My Orders
+                    </a>
+                    <a href="{% url 'wishlist' %}" class="profile-nav-link">
+                        <i class="bi bi-heart"></i> Wishlist
+                    </a>
+                    <a href="{% url 'logout' %}" class="profile-nav-link text-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="checkout-section mb-4">
+                <h5 class="fw-800 mb-4">Edit Profile</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">First Name</label>
+                            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Username</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Email</label>
+                            <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Phone</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">City</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-600">Address</label>
+                            {{ form.address }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Pincode</label>
+                            {{ form.pincode }}
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success fw-bold px-4">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {% if recent_orders %}
+            <div class="checkout-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-800 mb-0">Recent Orders</h5>
+                    <a href="{% url 'orders' %}" class="see-all-link">See All →</a>
+                </div>
+                {% for order in recent_orders %}
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                    <div>
+                        <span class="fw-600 text-success">#{{ order.order_number }}</span>
+                        <span class="text-muted ms-2 small">{{ order.created_at|date:"d M Y" }}</span>
+                        <div class="text-muted small">{{ order.items.count }} items · ₹{{ order.total }}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="order-status-badge status-{{ order.status }} small">{{ order.get_status_display }}</span>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-success btn-sm">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

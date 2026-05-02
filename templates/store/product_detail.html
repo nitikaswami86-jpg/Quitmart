@@ -1,0 +1,191 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="product-detail-img-wrapper">
+                {% if product.discount_percent > 0 %}
+                <div class="detail-discount-badge">{{ product.discount_percent }}% OFF</div>
+                {% endif %}
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-detail-img">
+                {% else %}
+                <div class="product-detail-img-placeholder">{{ product.category.icon }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="product-detail-info">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-light text-success border border-success-subtle">{{ product.category.name }}</span>
+                    <span class="delivery-tag"><i class="bi bi-clock-fill"></i> {{ product.delivery_time }}</span>
+                </div>
+
+                <h1 class="product-detail-title">{{ product.name }}</h1>
+                <p class="text-muted mb-2">{{ product.unit }}</p>
+
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= product.rating %}
+                        <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                        <i class="bi bi-star text-warning"></i>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <strong>{{ product.rating }}</strong>
+                    <span class="text-muted">({{ product.review_count }} reviews)</span>
+                </div>
+
+                <div class="detail-price-block mb-4">
+                    <span class="detail-price">₹{{ product.price }}</span>
+                    {% if product.original_price %}
+                    <span class="detail-mrp text-muted text-decoration-line-through ms-2">₹{{ product.original_price }}</span>
+                    <span class="badge bg-success ms-2">{{ product.discount_percent }}% Off</span>
+                    {% endif %}
+                </div>
+
+                {% if product.is_in_stock %}
+                <div class="alert alert-success-subtle d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span class="fw-600">In Stock ({{ product.stock }} available)</span>
+                </div>
+                {% else %}
+                <div class="alert alert-danger-subtle d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-x-circle-fill text-danger"></i>
+                    <span class="fw-600">Out of Stock</span>
+                </div>
+                {% endif %}
+
+                {% if product.is_in_stock %}
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <div class="qty-selector">
+                        <button class="qty-btn-lg" id="qtyMinus" onclick="changeDetailQty(-1)">−</button>
+                        <input type="number" id="detailQty" value="1" min="1" max="{{ product.stock }}" class="qty-input">
+                        <button class="qty-btn-lg" id="qtyPlus" onclick="changeDetailQty(1)">+</button>
+                    </div>
+                    <form method="post" action="{% url 'add_to_cart' product.id %}" id="addToCartForm" style="flex:1">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" id="hiddenQty" value="1">
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold" id="addToCartBtn">
+                            <i class="bi bi-bag-plus me-2"></i>Add to Cart
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                <button class="btn btn-outline-danger mb-4" onclick="toggleWishlist({{ product.id }}, this)" id="wishlistBtn">
+                    <i class="bi bi-heart{% if in_wishlist %}-fill{% endif %} me-2"></i>
+                    {% if in_wishlist %}Saved in Wishlist{% else %}Add to Wishlist{% endif %}
+                </button>
+                {% endif %}
+
+                <div class="delivery-info-cards">
+                    <div class="delivery-card">
+                        <i class="bi bi-lightning-charge-fill text-warning"></i>
+                        <div>
+                            <strong>{{ product.delivery_time }} Delivery</strong>
+                            <small class="d-block text-muted">Express delivery</small>
+                        </div>
+                    </div>
+                    <div class="delivery-card">
+                        <i class="bi bi-shield-check text-success"></i>
+                        <div>
+                            <strong>Quality Assured</strong>
+                            <small class="d-block text-muted">100% fresh guarantee</small>
+                        </div>
+                    </div>
+                    <div class="delivery-card">
+                        <i class="bi bi-arrow-repeat text-primary"></i>
+                        <div>
+                            <strong>Easy Returns</strong>
+                            <small class="d-block text-muted">No questions asked</small>
+                        </div>
+                    </div>
+                </div>
+
+                {% if product.description %}
+                <div class="mt-4">
+                    <h6 class="fw-700 mb-2">Product Description</h6>
+                    <p class="text-muted">{{ product.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <section class="mt-5">
+        <h4 class="fw-800 mb-4">You might also like</h4>
+        <div class="row g-3">
+            {% for product in related_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include 'store/includes/product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeDetailQty(delta) {
+    const input = document.getElementById('detailQty');
+    const hidden = document.getElementById('hiddenQty');
+    let val = parseInt(input.value) + delta;
+    val = Math.max(1, Math.min({{ product.stock }}, val));
+    input.value = val;
+    hidden.value = val;
+}
+
+document.getElementById('detailQty')?.addEventListener('change', function() {
+    document.getElementById('hiddenQty').value = this.value;
+});
+
+document.getElementById('addToCartForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('addToCartBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
+    btn.disabled = true;
+
+    fetch(this.action, {
+        method: 'POST',
+        headers: {'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: new FormData(this)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.success) {
+            btn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Added to Cart!';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-success');
+            updateCartBadge(data.cart_count, data.cart_total);
+            showToast(data.message, 'success');
+            setTimeout(() => {
+                btn.innerHTML = '<i class="bi bi-bag-plus me-2"></i>Add to Cart';
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-outline-success');
+                btn.disabled = false;
+            }, 2000);
+        }
+    });
+});
+</script>
+{% endblock %}

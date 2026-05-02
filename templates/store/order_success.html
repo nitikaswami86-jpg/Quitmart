@@ -1,0 +1,55 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order Placed! – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="order-success-card mx-auto">
+        <div class="success-animation">✅</div>
+        <h2 class="fw-900 text-success mt-3">Order Placed Successfully!</h2>
+        <p class="text-muted fs-5">Aapka order confirm ho gaya! 🎉</p>
+
+        <div class="order-info-card mx-auto mt-4">
+            <div class="row g-3 text-start">
+                <div class="col-6">
+                    <small class="text-muted">Order Number</small>
+                    <div class="fw-700 text-success">#{{ order.order_number }}</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Estimated Delivery</small>
+                    <div class="fw-700 text-success">⚡ 10-15 mins</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Payment Method</small>
+                    <div class="fw-600">{{ order.get_payment_method_display }}</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Total Amount</small>
+                    <div class="fw-700 fs-5">₹{{ order.total }}</div>
+                </div>
+                <div class="col-12">
+                    <small class="text-muted">Delivering To</small>
+                    <div class="fw-600">{{ order.name }}, {{ order.address }}, {{ order.city }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tracking-steps mt-4">
+            <div class="step active"><div class="step-icon">📋</div><small>Order Placed</small></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">✅</div><small>Confirmed</small></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">👨‍🍳</div><small>Preparing</small></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">🛵</div><small>On the Way</small></div>
+            <div class="step-line"></div>
+            <div class="step"><div class="step-icon">🏠</div><small>Delivered</small></div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap">
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-success btn-lg px-4 fw-bold">Track Order</a>
+            <a href="{% url 'home' %}" class="btn btn-outline-success btn-lg px-4">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

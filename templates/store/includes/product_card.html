@@ -1,0 +1,63 @@
+{% load static %}
+<div class="product-card" id="product-{{ product.id }}">
+    {% if product.discount_percent > 0 %}
+    <div class="discount-badge">{{ product.discount_percent }}% OFF</div>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+    <button class="wishlist-btn" onclick="toggleWishlist({{ product.id }}, this)" title="Add to Wishlist">
+        <i class="bi bi-heart{% if product.id in cart_product_ids %}-fill text-danger{% endif %}"></i>
+    </button>
+    {% endif %}
+
+    <a href="{% url 'product_detail' product.slug %}">
+        <div class="product-img-wrapper">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy"
+                 onerror="this.src='https://via.placeholder.com/200x200/f0f0f0/999?text=Product'">
+            {% else %}
+            <div class="product-img-placeholder">{{ product.category.icon }}</div>
+            {% endif %}
+        </div>
+    </a>
+
+    <div class="product-info">
+        <div class="delivery-tag">
+            <i class="bi bi-clock-fill"></i> {{ product.delivery_time }}
+        </div>
+
+        <a href="{% url 'product_detail' product.slug %}" class="product-name-link">
+            <h6 class="product-name">{{ product.name }}</h6>
+        </a>
+        <p class="product-unit text-muted">{{ product.unit }}</p>
+        <div class="product-rating">
+            <i class="bi bi-star-fill text-warning"></i>
+            <span>{{ product.rating }}</span>
+            <span class="text-muted">({{ product.review_count }})</span>
+        </div>
+        <div class="price-cart-row">
+            <div class="price-group">
+                <span class="product-price">₹{{ product.price }}</span>
+                {% if product.original_price %}
+                <span class="product-mrp text-muted text-decoration-line-through small">₹{{ product.original_price }}</span>
+                {% endif %}
+            </div>
+
+            {% if product.is_in_stock %}
+                {% if product.id in cart_product_ids %}
+                <div class="qty-control" id="qty-{{ product.id }}">
+                    <button class="qty-btn qty-minus" onclick="updateQtyFromCard({{ product.id }}, -1)">−</button>
+                    <span class="qty-value" id="qty-val-{{ product.id }}">1</span>
+                    <button class="qty-btn qty-plus" onclick="updateQtyFromCard({{ product.id }}, 1)">+</button>
+                </div>
+                {% else %}
+                <button class="add-to-cart-btn" onclick="addToCart({{ product.id }}, this)">
+                    <i class="bi bi-plus-lg"></i> Add
+                </button>
+                {% endif %}
+            {% else %}
+            <span class="out-of-stock-badge">Out of Stock</span>
+            {% endif %}
+        </div>
+    </div>
+</div>

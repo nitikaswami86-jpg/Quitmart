@@ -1,0 +1,150 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-800 mb-4"><i class="bi bi-bag-check-fill text-success me-2"></i>Checkout</h3>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <form method="post" id="checkoutForm">
+                {% csrf_token %}
+                <div class="checkout-section mb-4">
+                    <h5 class="checkout-section-title">
+                        <span class="step-num">1</span> Delivery Address
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Full Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="text-danger small">{{ form.name.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Phone Number *</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-600">Delivery Address *</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}<div class="text-danger small">{{ form.address.errors }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">City *</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Pincode *</label>
+                            {{ form.pincode }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-section mb-4">
+                    <h5 class="checkout-section-title">
+                        <span class="step-num">2</span> Payment Method
+                    </h5>
+                    <div class="payment-options">
+                        {% for radio in form.payment_method %}
+                        <label class="payment-option {% if forloop.first %}selected{% endif %}">
+                            {{ radio.tag }}
+                            <div class="payment-option-content">
+                                <span class="payment-label">{{ radio.choice_label }}</span>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="checkout-section mb-4">
+                    <h5 class="checkout-section-title">
+                        <span class="step-num">3</span> Order Notes <span class="text-muted fw-normal fs-6">(Optional)</span>
+                    </h5>
+                    {{ form.notes }}
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 fw-bold py-3" id="placeOrderBtn">
+                    <i class="bi bi-bag-check-fill me-2"></i>Place Order
+                </button>
+            </form>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="order-summary-card sticky-lg-top" style="top:80px">
+                <h5 class="fw-800 mb-4">📋 Order Summary</h5>
+
+                <div class="checkout-items-list mb-4">
+                    {% for item in cart.items.all %}
+                    <div class="checkout-item">
+                        <div class="checkout-item-img">
+                            {% if item.product.image_url %}
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}"
+                                 onerror="this.src='https://via.placeholder.com/50x50/f0f0f0/999?text=?'">
+                            {% else %}
+                            <span>{{ item.product.category.icon }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="checkout-item-info">
+                            <div class="fw-600 small">{{ item.product.name }}</div>
+                            <div class="text-muted small">{{ item.product.unit }} × {{ item.quantity }}</div>
+                        </div>
+                        <div class="fw-700 small">₹{{ item.total_price }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ cart.subtotal }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Fee</span>
+                    <span class="{% if cart.delivery_fee == 0 %}text-success fw-700{% endif %}">
+                        {% if cart.delivery_fee == 0 %}FREE 🎉{% else %}₹{{ cart.delivery_fee }}{% endif %}
+                    </span>
+                </div>
+                <hr>
+                <div class="summary-row total-row mb-4">
+                    <strong>Total Payable</strong>
+                    <strong class="text-success fs-5">₹{{ cart.total }}</strong>
+                </div>
+
+                <!-- Delivery Estimate -->
+                <div class="delivery-estimate-box">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="fs-2">⚡</div>
+                        <div>
+                            <strong>Estimated Delivery</strong>
+                            <div class="text-success fw-700">10 - 15 minutes</div>
+                            <small class="text-muted">Order now & get it super fast!</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="trust-badges mt-3">
+                    <div class="trust-item"><i class="bi bi-shield-lock text-success"></i> 100% Secure</div>
+                    <div class="trust-item"><i class="bi bi-arrow-repeat text-primary"></i> Easy Returns</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.payment-option input').forEach(input => {
+    input.addEventListener('change', function() {
+        document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+        this.closest('.payment-option').classList.add('selected');
+    });
+});
+
+document.getElementById('checkoutForm').addEventListener('submit', function() {
+    const btn = document.getElementById('placeOrderBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Placing Order...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

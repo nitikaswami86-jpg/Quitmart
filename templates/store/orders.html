@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Orders – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-800 mb-4"><i class="bi bi-bag-fill text-success me-2"></i>My Orders</h3>
+
+    {% if orders %}
+    <div class="row g-3">
+        {% for order in orders %}
+        <div class="col-12">
+            <div class="order-card">
+                <div class="order-card-header">
+                    <div>
+                        <span class="fw-700 text-success">#{{ order.order_number }}</span>
+                        <span class="text-muted ms-2 small">{{ order.created_at|date:"d M Y, h:i A" }}</span>
+                    </div>
+                    <span class="order-status-badge status-{{ order.status }}">
+                        {% if order.status == 'pending' %}📋 Order Placed
+                        {% elif order.status == 'confirmed' %}✅ Confirmed
+                        {% elif order.status == 'preparing' %}👨‍🍳 Preparing
+                        {% elif order.status == 'out_for_delivery' %}🛵 Out for Delivery
+                        {% elif order.status == 'delivered' %}🏠 Delivered
+                        {% elif order.status == 'cancelled' %}❌ Cancelled
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="order-card-body">
+                    <div class="order-items-preview">
+                        {% for item in order.items.all|slice:":3" %}
+                        <div class="order-item-chip">{{ item.product_name }} × {{ item.quantity }}</div>
+                        {% endfor %}
+                        {% if order.items.count > 3 %}
+                        <div class="order-item-chip text-muted">+{{ order.items.count|add:"-3" }} more</div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted small">Total: </span>
+                            <span class="fw-700 text-success fs-5">₹{{ order.total }}</span>
+                            <span class="ms-2 text-muted small">{{ order.get_payment_method_display }}</span>
+                        </div>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-success btn-sm fw-600">
+                            View Details →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-5">
+        <div class="empty-icon">📦</div>
+        <h4 class="fw-700 mt-3">Koi order nahi hai abhi</h4>
+        <p class="text-muted">Aapne abhi tak koi order nahi kiya</p>
+        <a href="{% url 'products' %}" class="btn btn-success px-5 mt-2">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

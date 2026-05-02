@@ -1,0 +1,31 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Wishlist – QuickMart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-800 mb-4">
+        <i class="bi bi-heart-fill text-danger me-2"></i>
+        My Wishlist
+    </h3>
+
+    {% if wishlist_items %}
+    <div class="row g-3">
+        {% for item in wishlist_items %}
+        <div class="col-6 col-md-4 col-lg-3">
+            {% with product=item.product %}
+            {% include 'store/includes/product_card.html' %}
+            {% endwith %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-5">
+        <div class="empty-icon">❤️</div>
+        <h4 class="fw-700 mt-3">Wishlist khaali hai</h4>
+        <p class="text-muted">Pasandida products wishlist mein save karein</p>
+        <a href="{% url 'products' %}" class="btn btn-success px-5 mt-2">Products Dekhein</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

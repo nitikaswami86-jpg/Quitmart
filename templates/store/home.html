@@ -1,0 +1,251 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}QuickMart – Grocery Delivered in 10 Minutes{% endblock %}
+
+{% block category_nav %}
+<div class="category-nav-bar">
+    <div class="container">
+        <div class="category-scroll">
+            <a href="{% url 'products' %}" class="category-pill active">
+                🛒 All
+            </a>
+            {% for cat in categories %}
+            <a href="{% url 'products' %}?category={{ cat.slug }}" class="category-pill">
+                {{ cat.icon }} {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-slide hero-slide-1">
+                    <div class="container h-100">
+                        <div class="row h-100 align-items-center">
+                            <div class="col-lg-6">
+                                <span class="hero-badge">⚡ 10 Minute Delivery</span>
+                                <h1 class="hero-title">Fresh Groceries<br><span class="text-warning">at Your Door</span></h1>
+                                <p class="hero-subtitle">Order before your hunger grows. We deliver in minutes!</p>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <a href="{% url 'products' %}" class="btn btn-warning btn-lg fw-bold px-4">Shop Now →</a>
+                                    <a href="{% url 'products' %}?category=fruits-vegetables" class="btn btn-outline-light btn-lg px-4">Fresh Veggies</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 text-center d-none d-lg-block">
+                                <div class="hero-emoji-display">🥦🍎🥛🍌</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide-2">
+                    <div class="container h-100">
+                        <div class="row h-100 align-items-center">
+                            <div class="col-lg-6">
+                                <span class="hero-badge bg-success">💸 Best Deals</span>
+                                <h1 class="hero-title">Save Big on<br><span class="text-warning">Daily Essentials</span></h1>
+                                <p class="hero-subtitle">Up to 40% off on fruits, vegetables & dairy!</p>
+                                <a href="{% url 'products' %}" class="btn btn-warning btn-lg fw-bold px-4">Grab Deals →</a>
+                            </div>
+                            <div class="col-lg-6 text-center d-none d-lg-block">
+                                <div class="hero-emoji-display">🎯💰🛒✨</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide-3">
+                    <div class="container h-100">
+                        <div class="row h-100 align-items-center">
+                            <div class="col-lg-6">
+                                <span class="hero-badge bg-danger">🎁 Free Delivery</span>
+                                <h1 class="hero-title">Free Delivery<br><span class="text-warning">on ₹199+</span></h1>
+                                <p class="hero-subtitle">Add items worth ₹199 and get free doorstep delivery!</p>
+                                <a href="{% url 'products' %}" class="btn btn-warning btn-lg fw-bold px-4">Start Shopping →</a>
+                            </div>
+                            <div class="col-lg-6 text-center d-none d-lg-block">
+                                <div class="hero-emoji-display">🚚🎁💚🏠</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</section>
+
+<section class="stats-strip">
+    <div class="container">
+        <div class="row g-0">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-text">
+                        <strong>10 min</strong>
+                        <span>Delivery</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-text">
+                        <strong>5000+</strong>
+                        <span>Products</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-text">
+                        <strong>4.8 Rating</strong>
+                        <span>Customer Love</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon">🚚</div>
+                    <div class="stat-text">
+                        <strong>Free</strong>
+                        <span>Above ₹199</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Shop by Category</h2>
+            <a href="{% url 'products' %}" class="see-all-link">See All →</a>
+        </div>
+        <div class="row g-3">
+            {% for cat in categories %}
+            <div class="col-4 col-md-3 col-lg-2">
+                <a href="{% url 'products' %}?category={{ cat.slug }}" class="category-card">
+                    <div class="category-card-icon">{{ cat.icon }}</div>
+                    <div class="category-card-name">{{ cat.name }}</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if featured_products %}
+<section class="section-padding bg-light-green">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">⚡ Best Sellers</h2>
+            <a href="{% url 'products' %}" class="see-all-link">See All →</a>
+        </div>
+        <div class="row g-3">
+            {% for product in featured_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include 'store/includes/product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="promo-card promo-green" onclick="window.location='{% url 'products' %}?category=fruits-vegetables'">
+                    <div>
+                        <h3 class="fw-800 mb-1">Fresh Farm Produce</h3>
+                        <p class="mb-2 opacity-75">Straight from farms to you</p>
+                        <span class="btn btn-dark btn-sm fw-bold">Shop Now →</span>
+                    </div>
+                    <div class="promo-emoji">🥦🍎🥕</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="promo-card promo-yellow" onclick="window.location='{% url 'products' %}?category=dairy-eggs'">
+                    <div>
+                        <h3 class="fw-800 mb-1">Dairy & Eggs</h3>
+                        <p class="mb-2 opacity-75">Pure & fresh daily</p>
+                        <span class="btn btn-dark btn-sm fw-bold">Shop Now →</span>
+                    </div>
+                    <div class="promo-emoji">🥛🧈🥚</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">🛍️ All Products</h2>
+            <a href="{% url 'products' %}" class="see-all-link">View All →</a>
+        </div>
+        <div class="row g-3">
+            {% for product in all_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include 'store/includes/product_card.html' %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'products' %}" class="btn btn-outline-success btn-lg px-5 fw-bold">Load More Products</a>
+        </div>
+    </div>
+</section>
+
+<section class="why-us-section section-padding">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Why Choose QuickMart?</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-3 text-center">
+                <div class="why-icon">⚡</div>
+                <h5 class="fw-700 mt-3">10-Min Delivery</h5>
+                <p class="text-muted small">Guaranteed delivery in 10 minutes</p>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="why-icon">✅</div>
+                <h5 class="fw-700 mt-3">Quality Assured</h5>
+                <p class="text-muted small">100% fresh & quality products</p>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="why-icon">💰</div>
+                <h5 class="fw-700 mt-3">Best Prices</h5>
+                <p class="text-muted small">Lowest prices guaranteed</p>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+                <div class="why-icon">🔒</div>
+                <h5 class="fw-700 mt-3">Secure Payment</h5>
+                <p class="text-muted small">100% safe & secure checkout</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

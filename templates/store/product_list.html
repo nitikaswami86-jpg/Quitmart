@@ -1,0 +1,108 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{% if selected_category %}{{ selected_category.name }}{% elif search_query %}Search: {{ search_query }}{% else %}All Products{% endif %} – QuickMart{% endblock %}
+
+{% block category_nav %}
+<div class="category-nav-bar">
+    <div class="container">
+        <div class="category-scroll">
+            <a href="{% url 'products' %}" class="category-pill {% if not selected_category %}active{% endif %}">🛒 All</a>
+            {% for cat in categories %}
+            <a href="{% url 'products' %}?category={{ cat.slug }}" 
+               class="category-pill {% if selected_category.slug == cat.slug %}active{% endif %}">
+                {{ cat.icon }} {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if selected_category %}{{ selected_category.name }}
+                        {% elif search_query %}Search: "{{ search_query }}"
+                        {% else %}All Products{% endif %}
+                    </li>
+                </ol>
+            </nav>
+            <h4 class="fw-800 mb-0">
+                {% if selected_category %}{{ selected_category.icon }} {{ selected_category.name }}
+                {% elif search_query %}Results for "{{ search_query }}"
+                {% else %}🛍️ All Products{% endif %}
+                <span class="fs-6 text-muted fw-normal ms-2">{{ total_products }} items</span>
+            </h4>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small">Sort by:</span>
+            <select class="form-select form-select-sm w-auto" onchange="sortProducts(this.value)">
+                <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Relevance</option>
+                <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Top Rated</option>
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest</option>
+            </select>
+        </div>
+    </div>
+
+    {% if products %}
+    <div class="row g-3">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            {% include 'store/includes/product_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+    {% if products.has_other_pages %}
+    <nav class="mt-5 d-flex justify-content-center">
+        <ul class="pagination pagination-lg gap-1">
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link rounded-pill" href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ products.previous_page_number }}">
+                    ‹ Prev
+                </a>
+            </li>
+            {% endif %}
+            {% for num in products.paginator.page_range %}
+            <li class="page-item {% if products.number == num %}active{% endif %}">
+                <a class="page-link rounded-pill" href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link rounded-pill" href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ products.next_page_number }}">
+                    Next ›
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state text-center py-5">
+        <div class="empty-icon">🔍</div>
+        <h4 class="fw-700 mt-3">Koi product nahi mila</h4>
+        <p class="text-muted">Try different keywords or browse categories</p>
+        <a href="{% url 'products' %}" class="btn btn-success px-4 mt-2">Browse All Products</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function sortProducts(value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', value);
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}
